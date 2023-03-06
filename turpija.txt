@@ -21,4 +21,9 @@ Learn more about git log and git bisect on their individual usage pages.
 
 You have two options for integrating your feature into the main branch: merging directly or rebasing and then merging. The former option results in a 3-way merge and a merge commit, while the latter results in a fast-forward merge and a perfectly linear history. The following diagram demonstrates how rebasing onto the main branch facilitates a fast-forward merge.
 
+<<<<<<< HEAD
 Puno teksta za čitat
+=======
+Don't rebase public history
+As we've discussed previously in rewriting history, you should never rebase commits once they've been pushed to a public repository. The rebase would replace the old commits with new ones and it would look like that part of your project history abruptly vanished.
+>>>>>>> 963b281 (komit1)
