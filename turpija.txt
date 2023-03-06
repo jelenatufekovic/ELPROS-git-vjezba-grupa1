@@ -20,3 +20,5 @@ Because the git history is clean, git bisect has a refined set of commits to com
 Learn more about git log and git bisect on their individual usage pages.
 
 You have two options for integrating your feature into the main branch: merging directly or rebasing and then merging. The former option results in a 3-way merge and a merge commit, while the latter results in a fast-forward merge and a perfectly linear history. The following diagram demonstrates how rebasing onto the main branch facilitates a fast-forward merge.
+
+Puno teksta za čitat
