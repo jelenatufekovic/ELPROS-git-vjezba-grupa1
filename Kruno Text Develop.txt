@@ -4,7 +4,7 @@ Tri
 
 1
 2
-<<<<<<< HEAD
+
 3
 
 4
@@ -14,7 +14,6 @@ Tri
 8
 9
 10
-=======
 
 Pozdrav Kruno! :D
->>>>>>> 76c1a45 (Added new lines two Barbara and Kruno files)
+

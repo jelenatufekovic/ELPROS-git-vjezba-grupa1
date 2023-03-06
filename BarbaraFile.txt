@@ -1,7 +1,7 @@
 Bok!
 
-<<<<<<< HEAD
+
 Disikejima
-=======
+
 A vi kako te?
->>>>>>> 76c1a45 (Added new lines two Barbara and Kruno files)
+
