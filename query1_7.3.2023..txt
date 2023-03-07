@@ -1,0 +1,58 @@
+create database SchoolMS
+
+create table School
+(
+	Id uniqueidentifier not null PRIMARY KEY,
+	Name varchar (50) not null,
+	Address varchar (150) not null
+);
+
+create table Student
+(
+	Id uniqueidentifier not null PRIMARY KEY,
+	FirstName varchar (50) not null,
+	LastName varchar (50) not null,
+	DOB datetime not null,
+	Address varchar (150) not null,
+	SchoolId uniqueidentifier not null FOREIGN KEY REFERENCES School(Id)
+);
+
+create table LoginData
+(
+	Id uniqueidentifier not null PRIMARY KEY FOREIGN KEY REFERENCES Student(Id),
+	Username varchar (50) not null unique,
+	Password varchar (50) not null unique
+);
+create table Course 
+(
+	Id uniqueidentifier not null PRIMARY KEY,
+	Name varchar (50) not null,
+	Description varchar (250) not null,
+	SchoolId uniqueidentifier not null FOREIGN KEY REFERENCES School(Id)
+);
+create table StudentCourse
+(
+	Id uniqueidentifier not null PRIMARY KEY,
+	StudentId uniqueidentifier not null,
+	CourseId uniqueidentifier not null
+	Constraint FK_Student_StudentCourse_StudentId FOREIGN KEY (StudentId) REFERENCES Student(Id),
+	Constraint FK_Course_StudentCourse_CourseId FOREIGN KEY (CourseId) REFERENCES Course(Id)
+);
+Insert into School values (newid(), 'Osnovna Škola Višnjevac', 'Crni put 41 Višnjevac');
+
+Insert into Student values (newid(), 'Marko', 'Perić', GETDATE(), 'Kralja Tomislava 8 Josipovac', (SELECT "Id" FROM "School" WHERE "Name"='Osnovna Škola Višnjevac'));
+Insert into Student values (newid(), 'Iva', 'Lukač', GETDATE(), 'Kralja Krešimira 21 Višnjevac', (SELECT "Id" FROM "School" WHERE "Name"='Osnovna Škola Višnjevac'));
+Insert into Student values (newid(), 'Tonka', 'Ilić', GETDATE(), 'Kneza Branimira 10 Josipovac', (SELECT "Id" FROM "School" WHERE "Name"='Osnovna Škola Višnjevac'));
+
+insert into LoginData values((SELECT "Id" FROM "Student" WHERE "FirstName"='Marko'), 'mperic','128G7Z');
+insert into LoginData values((SELECT "Id" FROM "Student" WHERE "FirstName"='Iva'), 'ilukac','45B7Z');
+insert into LoginData values((SELECT "Id" FROM "Student" WHERE "FirstName"='Tonka'), 'tilic','8934G2');
+
+insert into Course values (newid(), 'Science', 'Combines biology and physics, grades 5-8', (SELECT "Id" FROM "School" WHERE "Name"='Osnovna Škola Višnjevac'));
+insert into Course values (newid(), 'Maths', 'Calculus, all grades', (SELECT "Id" FROM "School" WHERE "Name"='Osnovna Škola Višnjevac'));
+insert into Course values (newid(), 'Geography', 'grades 5-8', (SELECT "Id" FROM "School" WHERE "Name"='Osnovna Škola Višnjevac'));
+
+insert into StudentCourse values (newid(), (SELECT "Id" from "Student" where "FirstName"='Marko'), (Select "Id" from Course where "Name"='Science'));
+insert into StudentCourse values (newid(), (SELECT "Id" from "Student" where "FirstName"='Marko'), (Select "Id" from Course where "Name"='Geography'));
+insert into StudentCourse values (newid(), (SELECT "Id" from "Student" where "FirstName"='Iva'), (Select "Id" from Course where "Name"='Maths'));
+insert into StudentCourse values (newid(), (SELECT "Id" from "Student" where "FirstName"='Tonka'), (Select "Id" from Course where "Name"='Geography'));
