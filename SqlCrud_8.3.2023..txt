@@ -1,0 +1,85 @@
+insert into "School" values
+(newid(), 'Osnovna škola Retfala', 'Kapelska 18'),
+(newid(), 'Osnovna škola Ivana Filipovića', 'Dalmatinska 19'),
+(newid(), 'Osnovna škola Franje Krežme', 'Trg kralja Tomislava 18');
+
+insert into Student values
+(newid(),'Tino', 'Marić', 2015-12-27, 'Radićeva 18B', (select "Id" from "School" where "Id"='5B3E6A8D-BBD6-4342-89C3-CFB2115C1885')),
+(newid(),'Tino', 'Marić', 2015-12-27, 'Radićeva 18B', (select "Id" from "School" where "Id"='C1426D82-F27F-4BFA-9DE7-41132F9226EB')),
+(newid(),'Tino', 'Marić', 2015-12-27, 'Radićeva 18B', (select "Id" from "School" where "Id"='1E885019-C40A-46F5-B93D-510D978FDC3C'));
+
+select * from "Student" s 
+left join "LoginData" l on l."Id"=s."Id";
+
+select s."Id", s."FirstName", s."LastName", l."Username", l."Password" from "Student" s
+left join "LoginData" l on l."Id"=s."Id"
+order by s."LastName";
+
+--Shvatila sam da sam ranije unijela tri istoimena učenika, različitih Id-a i u različite škole, ali bih htjela da mi oni imaju različita imena pa ću ispraviti s update.
+
+update "Student"
+set "FirstName"='Lucija', "LastName"='Anić' where "Id"='89531723-8377-492A-8ABD-83D11562CF8D';
+update "Student"
+set "FirstName"='Tena', "LastName"='Szili' where "Id"='C1426D82-F27F-4BFA-9DE7-41132F9226EB';
+
+--samo je jedan update odradio jer sam za Tenu upisala Id od škole, umjesto od drugog Tina.
+
+update "Student"
+set "FirstName"='Tena', "LastName"='Szili', "Address"='Kolodvorska 9', "DOB"='2015-03-18 00:00' where "Id"='2877D4BE-CAE3-4174-A218-24B6E55CBD06';
+update "Student"
+set "Address"='Dalmatinska 52', "DOB"='2015-08-2 00:00' where "FirstName"='Lucija';
+--adresa i dob je trebalo ispraviti jer su bili jednaki kao kod Tina, dob nisam vrijeme stavila pa mi jeneki defaultni datum i vrijeme postavio.
+update "Student"
+set "DOB"='2015-11-19 00:00' where "FirstName"='Tino';
+
+
+insert into LoginData values
+((select "Id" from "Student" where "FirstName"='Lucija'), 'lanic', '87456HG'),
+((select "Id" from "Student" where "FirstName"='Tino'), 'tmaric', 'Z794M31'),
+((select "Id" from "Student" where "FirstName"='Tena'), 'rszili', 'G398JK11');
+
+--postoji li mogućnost da prilokom kreiranja studenta, automatski kreira podatak u LoginDetail tablici za tog studenta npr. username 
+--se kreira prvo slovo imena plus prezime, ako postoji isto neka doda broj, a pass generira neki random niz od brojeva i znakova kojih je ukupno npr. 8
+
+select s."Id", s."FirstName", s."LastName", l."Username", l."Password" from "Student" s
+left join "LoginData" l on l."Id"=s."Id"
+order by s."LastName";
+
+--slučajno sam stisnula execute na sve, unio mi je duplo podatke p aću pokušat izbrisat.
+
+select st."Id" as "StudentId", sc."Id" as "SchoolId", sc."Name", st."LastName" from "Student" st
+full outer join "School" sc on sc."Id"=st."Id"
+
+select s."Id" as "StudentId", l."Id" as "LoginId" from "Student" s
+left join "LoginData" l on l."Id"=s."Id";
+
+delete from "Student"
+where "Id"='657B3DEC-F70D-4900-BD5C-09AB7CA39403';
+delete from "Student"
+where "Id"='BE21A757-F6F1-40DC-B3B7-5F4E69B88F8D';
+delete from "Student"
+where "Id"='57798B38-B93E-42D2-9F86-C75BB376CAA3';
+
+select sc."Id" as "SchoolId", sc."Name", st."Id" as "StudentId" from School sc
+left join "Student" st on st."SchoolId"=sc."Id";
+
+select sc."Id" as "SchoolId", sc."Name", st."Id" as "StudentId" from School sc
+inner join "Student" st on st."SchoolId"=sc."Id";
+
+delete from "School"
+where "Id"='C6191F15-366A-4FBA-9A74-0A4B62F0F119';
+delete from "School"
+where "Id"='E9EB9065-2819-427F-BECC-20C886B9700F';
+delete from "School"
+where "Id"='72F5A378-6A9C-43A7-8CAC-402AB640C40F';
+
+select sc."Id" as "SchoolId", sc."Name", st."Id" as "StudentId" from School sc
+left join "Student" st on st."SchoolId"=sc."Id";
+
+--obrisani su krivo uneseni podaci
+
+select * from Student right join "School" on School.Id = Student.SchoolId
+
+update "Student" 
+set "SchoolId"='9BB55268-EC2E-47A7-8697-61A05BAD6706' where "FirstName"='Iva';
+--škola koja nije imala niti jednog učenika dodana je jednom učeniku.

@@ -1,0 +1,9 @@
+create database GymBeans
+
+create table Location
+(
+	Id uniqueidentifier not null PRIMARY KEY,
+	Name varchar (50) not null,
+	GroupTraining bit not null default 0,
+	
+);
