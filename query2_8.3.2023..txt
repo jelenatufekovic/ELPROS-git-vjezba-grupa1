@@ -5,5 +5,184 @@ create table Location
 	Id uniqueidentifier not null PRIMARY KEY,
 	Name varchar (50) not null,
 	GroupTraining bit not null default 0,
-	
+	PersonalTrainer bit not null default 0,
+	Equipment varchar (250) null
 );
+create table Employee
+(
+	Id uniqueidentifier not null PRIMARY KEY,
+	FirstName varchar (50) not null,
+	LastName varchar (50) not null,
+	Position varchar (50)not null,
+	DateOfEmployment datetime not null,
+	LocationId uniqueidentifier not null FOREIGN KEY REFERENCES Location("Id")
+);
+create table LoginData
+(
+	Id uniqueidentifier not null PRIMARY KEY FOREIGN KEY references Employee("Id"),
+	Username varchar (50) not null unique,
+	Password varchar (20) not null unique
+);
+create table PersonalInfo
+(
+	Id uniqueidentifier not null PRIMARY KEY FOREIGN KEY references Employee("Id"),
+	Address varchar (150) null,
+	Phone varchar (150) null,
+	DOB datetime null,
+	Email varchar (100) null
+);
+create table Category
+(
+	Id uniqueidentifier not null PRIMARY KEY,
+	Name varchar (50) not null,
+	Description varchar (250) not null
+);
+create table Duration
+(
+	Id uniqueidentifier not null PRIMARY KEY,
+	Name varchar (50) not null,
+	Description varchar (250) not null
+);
+create table PaymentPlan
+(
+	Id uniqueidentifier not null PRIMARY KEY,
+	Name varchar (50) not null,
+	Description varchar (250) not null
+);
+create table MembershipPlan
+(
+	Id uniqueidentifier not null PRIMARY KEY,
+	Name varchar (250) not null,
+	CategoryId uniqueidentifier not null FOREIGN KEY REFERENCES Category("Id"),
+	DurationId uniqueidentifier not null FOREIGN KEY REFERENCES Duration("Id"),
+	PaymentPlanId uniqueidentifier not null FOREIGN KEY REFERENCES PaymentPlan("Id")
+);
+create table Member
+(
+	Id uniqueidentifier not null PRIMARY KEY,
+	FirstName varchar (50) not null,
+	LastName varchar (50) not null,
+	LocationId uniqueidentifier not null FOREIGN KEY REFERENCES Location("Id"),
+	PlanId uniqueidentifier not null FOREIGN KEY REFERENCES	MembershipPlan("Id"),
+	CategoryId uniqueidentifier not null FOREIGN KEY REFERENCES Category("Id")
+);
+
+--Insert into Tables
+
+Insert into Location values 
+(newid(), 'Osijek', '0', '1', 'sprave za vježbanje'),
+(newid(), 'Zagreb', '1', '1', 'sprave za vježbanje, svlačionice'),
+(newid(), 'Split', '0', '1', 'sprave za vježbanje, toalet m/f'),
+(newid(), 'Karlovac', '1', '0', 'sprave za vježbanje'),
+(newid(), 'Koprivnica', '0', '0', 'sprave za vježbanje')
+
+declare @id as uniqueidentifier set @id=newid();
+insert into Employee values 
+(@id, 'Marko', 'Stupar', 'admin', '2020-10-5 00:00', (select "Id" from Location where "Name"='Osijek'));
+insert into LoginData values
+(@id, 'markostupar', 'admin123');
+insert into PersonalInfo values
+(@id, 'Pod lipama 7', '099768354', '1999-03-21 00:00', 'mstupar@mail.com');
+
+declare @id as uniqueidentifier set @id=newid();
+insert into Employee values 
+(@id, 'Ante', 'Marić', 'receptionist', '2022-1-25 00:00', (select "Id" from Location where "Name"='Zagreb'));
+insert into LoginData values
+(@id, 'antemaric', 'lozinka123');
+insert into PersonalInfo values
+(@id, 'Osječka 59', null, '1996-11-8 00:00', 'amaric11@mail.com');
+
+declare @id as uniqueidentifier set @id=newid();
+insert into Employee values 
+(@id, 'Iva', 'Olić', 'trainer', '2021-8-3 00:00', (select "Id" from Location where "Name"='Split'));
+insert into LoginData values
+(@id, 'iolic', 'ivaolic123');
+insert into PersonalInfo values
+(@id, null, null, null, 'iolic23@mail.com');
+
+Insert into  Category values 
+(newid(), 'Regular', '18 and older'),
+(newid(), 'Student', 'proof required'),
+(newid(), 'Retiree', 'proof required');
+
+Insert into Duration values
+(newid(), 'Monthly', '1 Month subscription'),
+(newid(), 'Half Year', '6 Month subscription'),
+(newid(), 'Yearly', '12 Month subscription');
+
+Insert into PaymentPlan values
+(newid(), 'One-time', 'non-recurring payment, without contract'),
+(newid(), 'RCP', 'recurring card payment, with contract');
+
+Insert into MembershipPlan values
+(newid(), 'Student RCP 6M', 
+(select "Id" from Category where "Name"='Student'), 
+(select "Id" from Duration where "Name"='Half Year'), 
+(select "Id" from PaymentPlan where "Name"='RCP')),
+(newid(), 'Student RCP 1Y', 
+(select "Id" from Category where "Name"='Student'), 
+(select "Id" from Duration where "Name"='Yearly'), 
+(select "Id" from PaymentPlan where "Name"='RCP')),
+(newid(), 'Student One-time 1Y', 
+(select "Id" from Category where "Name"='Student'), 
+(select "Id" from Duration where "Name"='Yearly'), 
+(select "Id" from PaymentPlan where "Name"='One-time')),
+(newid(), 'Retiree RCP 6M', 
+(select "Id" from Category where "Name"='Retiree'), 
+(select "Id" from Duration where "Name"='Half Year'), 
+(select "Id" from PaymentPlan where "Name"='RCP')),
+(newid(), 'Retiree RCP 1Y', 
+(select "Id" from Category where "Name"='Retiree'), 
+(select "Id" from Duration where "Name"='Yearly'), 
+(select "Id" from PaymentPlan where "Name"='RCP')),
+(newid(), 'Retiree One-time 1Y', 
+(select "Id" from Category where "Name"='Retiree'), 
+(select "Id" from Duration where "Name"='Yearly'), 
+(select "Id" from PaymentPlan where "Name"='One-time')),
+(newid(), 'Regular One-time 1Y', 
+(select "Id" from Category where "Name"='Regular'), 
+(select "Id" from Duration where "Name"='Yearly'), 
+(select "Id" from PaymentPlan where "Name"='One-time')),
+(newid(), 'Regular RCP 1Y', 
+(select "Id" from Category where "Name"='Regular'), 
+(select "Id" from Duration where "Name"='Yearly'), 
+(select "Id" from PaymentPlan where "Name"='RCP')),
+(newid(), 'Regular RCP 6M', 
+(select "Id" from Category where "Name"='Regular'), 
+(select "Id" from Duration where "Name"='Half Year'), 
+(select "Id" from PaymentPlan where "Name"='RCP')),
+(newid(), 'Regular 1M', 
+(select "Id" from Category where "Name"='Regular'), 
+(select "Id" from Duration where "Name"='Monthly'), 
+(select "Id" from PaymentPlan where "Name"='One-time'));
+
+--CategoryId nisam morala povezati s Member tablicom jer su povezane preko MembershipPlan.
+
+Alter table Member
+drop column "CategoryId"; 
+
+--samo ovako nisam mogla pa sam napravila sljedeće:
+
+alter table Member
+drop constraint "FK__Member__Category__5165187F";
+
+Alter table Member
+drop column "CategoryId";
+--izbrisana veza s Category i kolona za FK u Member tablici.
+
+insert into Member values
+(newid(), 'Karla', 'Sučić', 
+(select "Id" from "Location" where "Name"='Osijek'), 
+(select "Id" from "MembershipPlan" where "Name"='Student RCP 6M')),
+(newid(), 'Tomislav', 'Barić', 
+(select "Id" from "Location" where "Name"='Zagreb'), 
+(select "Id" from "MembershipPlan" where "Name"='Regular RCP 1Y')),
+(newid(), 'Ivana', 'Pezelj', 
+(select "Id" from "Location" where "Name"='Koprivnica'), 
+(select "Id" from "MembershipPlan" where "Name"='Retiree RCP 6M')),
+(newid(), 'Tino', 'Andrašek', 
+(select "Id" from "Location" where "Name"='Split'), 
+(select "Id" from "MembershipPlan" where "Name"='Student One-time 1Y')),
+(newid(), 'Ante', 'Kulešić', 
+(select "Id" from "Location" where "Name"='Split'), 
+(select "Id" from "MembershipPlan" where "Name"='Regular One-time 1Y'));
