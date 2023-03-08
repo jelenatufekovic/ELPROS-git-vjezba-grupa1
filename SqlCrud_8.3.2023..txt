@@ -77,3 +77,9 @@ select sc."Id" as "SchoolId", sc."Name", st."Id" as "StudentId" from School sc
 left join "Student" st on st."SchoolId"=sc."Id";
 
 --obrisani su krivo uneseni podaci
+
+select * from Student right join "School" on School.Id = Student.SchoolId
+
+update "Student" 
+set "SchoolId"='9BB55268-EC2E-47A7-8697-61A05BAD6706' where "FirstName"='Iva';
+--škola koja nije imala niti jednog učenika dodana je jednom učeniku.
