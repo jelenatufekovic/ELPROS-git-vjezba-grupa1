@@ -5,5 +5,64 @@ create table Location
 	Id uniqueidentifier not null PRIMARY KEY,
 	Name varchar (50) not null,
 	GroupTraining bit not null default 0,
-	
+	PersonalTrainer bit not null default 0,
+	Equipment varchar (250) null
+);
+create table Employee
+(
+	Id uniqueidentifier not null PRIMARY KEY,
+	FirstName varchar (50) not null,
+	LastName varchar (50) not null,
+	Position varchar (50)not null,
+	DateOfEmployment datetime not null,
+	LocationId uniqueidentifier not null FOREIGN KEY REFERENCES Location("Id")
+);
+create table LoginData
+(
+	Id uniqueidentifier not null PRIMARY KEY FOREIGN KEY references Employee("Id"),
+	Username varchar (50) not null unique,
+	Password varchar (20) not null unique
+);
+create table PersonalInfo
+(
+	Id uniqueidentifier not null PRIMARY KEY FOREIGN KEY references Employee("Id"),
+	Address varchar (150) null,
+	Phone varchar (150) null,
+	DOB datetime null,
+	Email varchar (100) null
+);
+create table Category
+(
+	Id uniqueidentifier not null PRIMARY KEY,
+	Name varchar (50) not null,
+	Description varchar (250) not null
+);
+create table Duration
+(
+	Id uniqueidentifier not null PRIMARY KEY,
+	Name varchar (50) not null,
+	Description varchar (250) not null
+);
+create table PaymentPlan
+(
+	Id uniqueidentifier not null PRIMARY KEY,
+	Name varchar (50) not null,
+	Description varchar (250) not null
+);
+create table MembershipPlan
+(
+	Id uniqueidentifier not null PRIMARY KEY,
+	Name varchar (250) not null,
+	CategoryId uniqueidentifier not null FOREIGN KEY REFERENCES Category("Id"),
+	DurationId uniqueidentifier not null FOREIGN KEY REFERENCES Duration("Id"),
+	PaymentPlanId uniqueidentifier not null FOREIGN KEY REFERENCES PaymentPlan("Id")
+);
+create table Member
+(
+	Id uniqueidentifier not null PRIMARY KEY,
+	FirstName varchar (50) not null,
+	LastName varchar (50) not null,
+	LocationId uniqueidentifier not null FOREIGN KEY REFERENCES Location("Id"),
+	PlanId uniqueidentifier not null FOREIGN KEY REFERENCES	MembershipPlan("Id"),
+	CategoryId uniqueidentifier not null FOREIGN KEY REFERENCES Category("Id")
 );
