@@ -83,3 +83,24 @@ select * from Student right join "School" on School.Id = Student.SchoolId
 update "Student" 
 set "SchoolId"='9BB55268-EC2E-47A7-8697-61A05BAD6706' where "FirstName"='Iva';
 --škola koja nije imala niti jednog učenika dodana je jednom učeniku.
+
+--9.3.2023. Funkcije i View
+
+alter table Student
+add Average decimal(3,2) null;
+
+alter table StudentCourse
+add Mark int null check(Mark>=1 and Mark<=5);
+
+Create view "StudentCourseGrades" as 
+(
+	select s."FirstName", s."LastName", c."Name" as "CourseName", sc."Mark" as "CourseMark" from "StudentCourse" sc
+	inner join "Student" s on sc."StudentId"=s."Id"
+	inner join "Course" c on sc."CourseId"=c."Id" 
+	--order by s."LastName", c."Name" --javilo mi je da ne mogu pisati ovdje order by
+);
+
+select s."FirstName", s."LastName", c."Name" as "CourseName", sc."Mark" as "CourseMark" from "StudentCourse" sc
+	inner join "Student" s on sc."StudentId"=s."Id"
+	inner join "Course" c on sc."CourseId"=c."Id" 
+	order by s."LastName", c."Name"
