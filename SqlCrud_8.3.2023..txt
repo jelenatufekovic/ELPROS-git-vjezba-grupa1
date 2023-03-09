@@ -179,4 +179,20 @@ inner join Student s on sc."StudentId"=s."Id"
 group by s."FirstName"; 
 --Vratio je točan average nakon casta na Mark kolonu umjesto na rezultat.
 
+select s."Id" as StudentId, AVG(cast(sc."Mark" as decimal(10,2))) as AverageGrade 
+into StudentCourseData_temp4 
+from StudentCourse sc
+inner join Student s on sc."StudentId"=s."Id"
+group by s."Id"; 
+
+create function "SquareArea"(@sideLength decimal (10,2))
+returns decimal
+as
+begin
+declare @area decimal (10,2)
+set @area=(@sideLength*@sideLength)
+return @area
+end;
+
+
 
