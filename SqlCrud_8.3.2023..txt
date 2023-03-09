@@ -83,3 +83,116 @@ select * from Student right join "School" on School.Id = Student.SchoolId
 update "Student" 
 set "SchoolId"='9BB55268-EC2E-47A7-8697-61A05BAD6706' where "FirstName"='Iva';
 --škola koja nije imala niti jednog učenika dodana je jednom učeniku.
+
+--9.3.2023. Funkcije i View
+
+alter table Student
+add Average decimal(3,2) null;
+
+alter table StudentCourse
+add Mark int null check(Mark>=1 and Mark<=5);
+
+Create view "StudentCourseGrades" as 
+(
+	select s."FirstName", s."LastName", c."Name" as "CourseName", sc."Mark" as "CourseMark" from "StudentCourse" sc
+	inner join "Student" s on sc."StudentId"=s."Id"
+	inner join "Course" c on sc."CourseId"=c."Id" 
+	--order by s."LastName", c."Name" --javilo mi je da ne mogu pisati ovdje order by
+);
+
+select s."FirstName", s."LastName", c."Name" as "CourseName", sc."Mark" as "CourseMark" from "StudentCourse" sc
+	inner join "Student" s on sc."StudentId"=s."Id"
+	inner join "Course" c on sc."CourseId"=c."Id" 
+	order by s."LastName", c."Name"
+--alter da mi ipak pokaže i Id za Student i Course
+alter view StudentCourseGrades as
+(select s."Id" as "StudentId", s."FirstName", s."LastName", c."Id" as "CourseId", c."Name" as "CourseName", sc."Mark" as "CourseMark" from "StudentCourse" sc
+	inner join "Student" s on sc."StudentId"=s."Id"
+	inner join "Course" c on sc."CourseId"=c."Id" 
+)
+
+update StudentCourse 
+set "Mark"=3 where "StudentId"='20DF213B-69CD-4AE9-BB1C-0A717CECDC7C' and "CourseId"='A95450E1-B913-42BE-9BFC-D5E86487DF39';
+update StudentCourse
+set "Mark"=4 where "StudentId"='20DF213B-69CD-4AE9-BB1C-0A717CECDC7C' and "CourseId"='369F7C5A-1F98-4AD2-AE2F-358CD9931647';
+update StudentCourse
+set "Mark"=5 where "StudentId"='EAB10A3B-3430-4C14-B595-5BFF9F335153' and "CourseId"='A78CF725-8ACC-4C22-8838-13314B599A9F';
+update StudentCourse
+set "Mark"=5 where "StudentId"='C67DD7D9-9C42-4309-8E9E-FF103EC16786' and "CourseId"='A95450E1-B913-42BE-9BFC-D5E86487DF39';
+
+alter table Course
+drop constraint "FK__Course__SchoolId__403A8C7D"
+
+alter table Course 
+drop column SchoolId
+--Course nije bila dobra veza sa školom, ako ima više škola, one mogu imati više predmeta, a jedan predmet može biti u više škola, to je n-m relacija, dakle trebala bi biti nova tablica koja ih joina, ali to sada ne ću raditi jer mi trenutno nije potrebno.
+
+insert into Course values
+(newid(), 'English', 'English'),
+(newid(), 'P.E', 'Physical education'),
+(newid(), 'Arts', 'Arts'),
+(newid(), 'Music', 'Music'),
+(newid(), 'History', 'History');
+
+insert into StudentCourse values
+(newid(), (select "Id" from Student where "Id"='20DF213B-69CD-4AE9-BB1C-0A717CECDC7C'), 
+(select "Id" from Course where "Id"='A78CF725-8ACC-4C22-8838-13314B599A9F'), 4),
+(newid(), (select "Id" from Student where "Id"='20DF213B-69CD-4AE9-BB1C-0A717CECDC7C'), 
+(select "Id" from Course where "Id"='C718BDA2-089A-4753-9BC1-4813DB7C6FC0'), 5),
+(newid(), (select "Id" from Student where "Id"='20DF213B-69CD-4AE9-BB1C-0A717CECDC7C'), 
+(select "Id" from Course where "Id"='1B8F898C-FF47-4881-8635-ABFD5B516790'), 3),
+(newid(), (select "Id" from Student where "Id"='20DF213B-69CD-4AE9-BB1C-0A717CECDC7C'), 
+(select "Id" from Course where "Id"='DDBD0A1D-1CAC-428B-9107-AF68E574F5E8'), 5),
+(newid(), (select "Id" from Student where "Id"='20DF213B-69CD-4AE9-BB1C-0A717CECDC7C'), 
+(select "Id" from Course where "Id"='2687F06A-F016-460A-882D-B6EAD91389BD'), 3),
+(newid(), (select "Id" from Student where "Id"='20DF213B-69CD-4AE9-BB1C-0A717CECDC7C'), 
+(select "Id" from Course where "Id"='142AF88A-3CD4-45B2-AF9C-E9D7F383250C'), 3);
+
+create function "calculateAverage"(@totalSum int, @totalCount int)
+returns float
+As 
+Begin
+declare @average float;
+set @average=@totalSum/@totalCount;
+return @average;
+end;
+
+--copy to new table from select (no FK, PK)
+select s."FirstName", COUNT(sc."Mark") as "NumberOfGrades", SUM(sc."Mark") as "SumGrades" into StudentCourseData_temp    from StudentCourse sc
+inner join Student s on sc."StudentId"=s."Id"
+group by s."FirstName";
+
+drop table StudentCourseData_temp; --nisam stavila da mi računa average pa ću to popraviti i neka mi napravi nanovo tablicu
+
+select s."FirstName", COUNT(sc."Mark") as "NumberOfGrades", SUM(sc."Mark") as "SumGrades", AVG(sc."Mark") as AverageGrade into StudentCourseData_temp from StudentCourse sc
+inner join Student s on sc."StudentId"=s."Id"
+group by s."FirstName";
+
+drop table StudentCourseData_temp
+
+select s."FirstName", COUNT(sc."Mark") as "NumberOfGrades", SUM(sc."Mark") as "SumGrades", cast(AVG(sc."Mark")as decimal(10,2)) as AverageGrade into StudentCourseData_temp from StudentCourse sc
+inner join Student s on sc."StudentId"=s."Id"
+group by s."FirstName";
+
+select s."FirstName", AVG(cast(sc."Mark" as decimal(10,2))) as AverageGrade into StudentCourseData_temp3 from StudentCourse sc
+inner join Student s on sc."StudentId"=s."Id"
+group by s."FirstName"; 
+--Vratio je točan average nakon casta na Mark kolonu umjesto na rezultat.
+
+select s."Id" as StudentId, AVG(cast(sc."Mark" as decimal(10,2))) as AverageGrade 
+into StudentCourseData_temp4 
+from StudentCourse sc
+inner join Student s on sc."StudentId"=s."Id"
+group by s."Id"; 
+
+create function "SquareArea"(@sideLength decimal (10,2))
+returns decimal
+as
+begin
+declare @area decimal (10,2)
+set @area=(@sideLength*@sideLength)
+return @area
+end;
+
+
+
