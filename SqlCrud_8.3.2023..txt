@@ -104,3 +104,33 @@ select s."FirstName", s."LastName", c."Name" as "CourseName", sc."Mark" as "Cour
 	inner join "Student" s on sc."StudentId"=s."Id"
 	inner join "Course" c on sc."CourseId"=c."Id" 
 	order by s."LastName", c."Name"
+--alter da mi ipak pokaže i Id za Student i Course
+alter view StudentCourseGrades as
+(select s."Id" as "StudentId", s."FirstName", s."LastName", c."Id" as "CourseId", c."Name" as "CourseName", sc."Mark" as "CourseMark" from "StudentCourse" sc
+	inner join "Student" s on sc."StudentId"=s."Id"
+	inner join "Course" c on sc."CourseId"=c."Id" 
+)
+
+update StudentCourse 
+set "Mark"=3 where "StudentId"='20DF213B-69CD-4AE9-BB1C-0A717CECDC7C' and "CourseId"='A95450E1-B913-42BE-9BFC-D5E86487DF39';
+update StudentCourse
+set "Mark"=4 where "StudentId"='20DF213B-69CD-4AE9-BB1C-0A717CECDC7C' and "CourseId"='369F7C5A-1F98-4AD2-AE2F-358CD9931647';
+update StudentCourse
+set "Mark"=5 where "StudentId"='EAB10A3B-3430-4C14-B595-5BFF9F335153' and "CourseId"='A78CF725-8ACC-4C22-8838-13314B599A9F';
+update StudentCourse
+set "Mark"=5 where "StudentId"='C67DD7D9-9C42-4309-8E9E-FF103EC16786' and "CourseId"='A95450E1-B913-42BE-9BFC-D5E86487DF39';
+
+alter table Course
+drop constraint "FK__Course__SchoolId__403A8C7D"
+
+alter table Course 
+drop column SchoolId
+--Course nije bila dobra veza sa školom, ako ima više škola, one mogu imati više predmeta, a jedan predmet može biti u više škola, to je n-m relacija, dakle trebala bi biti nova tablica koja ih joina, ali to sada ne ću raditi jer mi trenutno nije potrebno.
+
+insert into Course values
+(newid(), 'English', 'English'),
+(newid(), 'P.E', 'Physical education'),
+(newid(), 'Arts', 'Arts'),
+(newid(), 'Music', 'Music'),
+(newid(), 'History', 'History');
+
