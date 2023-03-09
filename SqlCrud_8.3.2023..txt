@@ -134,3 +134,49 @@ insert into Course values
 (newid(), 'Music', 'Music'),
 (newid(), 'History', 'History');
 
+insert into StudentCourse values
+(newid(), (select "Id" from Student where "Id"='20DF213B-69CD-4AE9-BB1C-0A717CECDC7C'), 
+(select "Id" from Course where "Id"='A78CF725-8ACC-4C22-8838-13314B599A9F'), 4),
+(newid(), (select "Id" from Student where "Id"='20DF213B-69CD-4AE9-BB1C-0A717CECDC7C'), 
+(select "Id" from Course where "Id"='C718BDA2-089A-4753-9BC1-4813DB7C6FC0'), 5),
+(newid(), (select "Id" from Student where "Id"='20DF213B-69CD-4AE9-BB1C-0A717CECDC7C'), 
+(select "Id" from Course where "Id"='1B8F898C-FF47-4881-8635-ABFD5B516790'), 3),
+(newid(), (select "Id" from Student where "Id"='20DF213B-69CD-4AE9-BB1C-0A717CECDC7C'), 
+(select "Id" from Course where "Id"='DDBD0A1D-1CAC-428B-9107-AF68E574F5E8'), 5),
+(newid(), (select "Id" from Student where "Id"='20DF213B-69CD-4AE9-BB1C-0A717CECDC7C'), 
+(select "Id" from Course where "Id"='2687F06A-F016-460A-882D-B6EAD91389BD'), 3),
+(newid(), (select "Id" from Student where "Id"='20DF213B-69CD-4AE9-BB1C-0A717CECDC7C'), 
+(select "Id" from Course where "Id"='142AF88A-3CD4-45B2-AF9C-E9D7F383250C'), 3);
+
+create function "calculateAverage"(@totalSum int, @totalCount int)
+returns float
+As 
+Begin
+declare @average float;
+set @average=@totalSum/@totalCount;
+return @average;
+end;
+
+--copy to new table from select (no FK, PK)
+select s."FirstName", COUNT(sc."Mark") as "NumberOfGrades", SUM(sc."Mark") as "SumGrades" into StudentCourseData_temp    from StudentCourse sc
+inner join Student s on sc."StudentId"=s."Id"
+group by s."FirstName";
+
+drop table StudentCourseData_temp; --nisam stavila da mi računa average pa ću to popraviti i neka mi napravi nanovo tablicu
+
+select s."FirstName", COUNT(sc."Mark") as "NumberOfGrades", SUM(sc."Mark") as "SumGrades", AVG(sc."Mark") as AverageGrade into StudentCourseData_temp from StudentCourse sc
+inner join Student s on sc."StudentId"=s."Id"
+group by s."FirstName";
+
+drop table StudentCourseData_temp
+
+select s."FirstName", COUNT(sc."Mark") as "NumberOfGrades", SUM(sc."Mark") as "SumGrades", cast(AVG(sc."Mark")as decimal(10,2)) as AverageGrade into StudentCourseData_temp from StudentCourse sc
+inner join Student s on sc."StudentId"=s."Id"
+group by s."FirstName";
+
+select s."FirstName", AVG(cast(sc."Mark" as decimal(10,2))) as AverageGrade into StudentCourseData_temp3 from StudentCourse sc
+inner join Student s on sc."StudentId"=s."Id"
+group by s."FirstName"; 
+--Vratio je točan average nakon casta na Mark kolonu umjesto na rezultat.
+
+
