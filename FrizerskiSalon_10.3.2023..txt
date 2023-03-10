@@ -107,3 +107,21 @@ insert into HairLength values
 (newid(), 'Short', 'Chin Length'),
 (newid(), 'Medium', 'Above Shoulders'),
 (newid(), 'Long', 'Past the Shoulders');
+
+insert into Service values
+(newid(), 'Short HairCut', (select "Id" from "Category" where "Name"='HairCut'), (select "Id" from "HairLength" where "Name"='Short'), '00:20', '6.00'),
+(newid(), 'Medium HairCut', (select "Id" from "Category" where "Name"='HairCut'), (select "Id" from "HairLength" where "Name"='Medium'), '00:30', '8.00'),
+(newid(), 'Long Haircut', (select "Id" from "Category" where "Name"='HairCut'), (select "Id" from "HairLength" where "Name"='Long'), '00:40', '10.00'),
+(newid(), 'Short Styling', (select "Id" from "Category" where "Name"='Styling'), (select "Id" from "HairLength" where "Name"='Short'), '00:10', '4.00'),
+(newid(), 'Medium Styling', (select "Id" from "Category" where "Name"='Styling'), (select "Id" from "HairLength" where "Name"='Medium'), '00:15', '5.00'),
+(newid(), 'Long Styling', (select "Id" from "Category" where "Name"='Styling'), (select "Id" from "HairLength" where "Name"='Long'), '00:20', '6.00'),
+(newid(), 'Short Washing', (select "Id" from "Category" where "Name"='Washing'), (select "Id" from "HairLength" where "Name"='Short'), '00:05', '3.00'),
+(newid(), 'Medium Washing', (select "Id" from "Category" where "Name"='Washing'), (select "Id" from "HairLength" where "Name"='Medium'), '00:07', '4.00'),
+(newid(), 'Long Washing', (select "Id" from "Category" where "Name"='Washing'), (select "Id" from "HairLength" where "Name"='Long'), '00:09', '5.00'),
+(newid(), 'Short Coloring', (select "Id" from "Category" where "Name"='Coloring'), (select "Id" from "HairLength" where "Name"='Short'), '01:00', '15.00'),
+(newid(), 'Medium Coloring', (select "Id" from "Category" where "Name"='Coloring'), (select "Id" from "HairLength" where "Name"='Medium'), '01:10', '18.00'),
+(newid(), 'Long Coloring', (select "Id" from "Category" where "Name"='Coloring'), (select "Id" from "HairLength" where "Name"='Long'), '01:20', '21.00'),
+(newid(), 'Short Barber', (select "Id" from "Category" where "Name"='Barber'), (select "Id" from "HairLength" where "Name"='Short'), '00:15', '5.00'),
+(newid(), 'Smoothing Treatment Short', (select "Id" from "Category" where "Name"='Treatment'), (select "Id" from "HairLength" where "Name"='Short'), '01:00', '60.00');
+
+
