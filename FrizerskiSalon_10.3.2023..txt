@@ -166,3 +166,33 @@ create view "EmployeeLocation" as
 	select e."Id" as EmployeeId, e."FirstName", e."LastName", l."Name" as LocationName from Employee e 
 	inner join Location l on l."Id"= e."LocationId"
 );
+
+select s."Name" as ServiceName, count(lcs."ServiceName") as NumberOfServicesProvided into "TotalServicesAllLocations_temp" from LocationClientService lcs
+inner join Service s on s."Id"=lcs."Id"
+group by s."Name";
+
+ALTER view LocationClientService as
+(select l."Name" as LocationName, lc."ClientId", s."Id", s."Name" as ServiceName, s."Price" from "LocationClient" lc 
+inner join "Location" l on lc."LocationId"=l."Id"
+inner join "ClientService" cs on lc."ClientId"=cs."ClinetId"
+inner join "Service" s on cs."ServiceId"=s."Id");
+--Alter view jer mi nije vratio ClientId nego Id iz tablice ClientService
+
+drop view LocationClientService --Zato što je ime kolone krivo i treba napraviti rename kolone.
+EXEC sp_rename 'ClientService.ClinetId', 'ClientId';
+
+--Ponovo napravila view koji je ranije dropan zbog renam-a
+create view LocationClientService as
+(select l."Name" as LocationName, lc."ClientId", s."Id", s."Name" as ServiceName, s."Price" from "LocationClient" lc 
+inner join "Location" l on lc."LocationId"=l."Id"
+inner join "ClientService" cs on lc."ClientId"=cs."ClientId"
+inner join "Service" s on cs."ServiceId"=s."Id");
+
+create function ClientServiceFunction(@clientId uniqueidentifier)
+returns table
+as
+return 
+	select cs."ClientId", cs."ServiceId", s."Name" as ServiceName
+	from ClientService cs
+	inner join Service s on cs."ServiceId"=s."Id"
+	where cs."ClientId"=@clientId
