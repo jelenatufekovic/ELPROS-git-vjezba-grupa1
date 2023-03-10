@@ -1,0 +1,198 @@
+Create database HairSalon;
+create table Location
+(
+	Id uniqueidentifier PRIMARY KEY not null,
+	Name varchar (50) not null,
+	Address  varchar (250) not null
+);
+
+create table Employee
+(
+	Id uniqueidentifier not null PRIMARY KEY,
+	FirstName varchar(50) not null,
+	LastName varchar(50) not null,
+	DateOfEmployment smalldatetime not null,
+	LocationId uniqueidentifier not null FOREIGN KEY REFERENCES Location("Id")
+);
+create table PersonalInfo
+(
+	Id uniqueidentifier not null PRIMARY KEY FOREIGN KEY REFERENCES Employee("Id"),
+	Address varchar (250) null,
+	Phone varchar (50) null,
+	Email varchar (50) null,
+	DateOfBirth smalldatetime null
+);
+Create Table Category
+(
+	Id uniqueidentifier not null PRIMARY KEY,
+	Name varchar (50) not null,
+	Description varchar (150) not null
+);
+create table HairLength
+(
+	Id uniqueidentifier not null PRIMARY KEY,
+	Name varchar (50) not null,
+	Description varchar (150) not null
+);
+create table Service
+(
+	Id uniqueidentifier not null PRIMARY KEY,
+	Name varchar (150) not null,
+	CategoryId uniqueidentifier not null FOREIGN KEY REFERENCES Category("Id"),
+	HairLengthId uniqueidentifier not null FOREIGN KEY REFERENCES HairLength("Id"),
+	Duration time not null,
+	Price decimal (10,2) not null
+);
+create table LocationService
+(
+	Id uniqueidentifier not null PRIMARY KEY,
+	LocationId uniqueidentifier not null FOREIGN KEY REFERENCES Location("Id"),
+	ServiceId uniqueidentifier not null FOREIGN KEY REFERENCES Service("Id")
+);
+create table Client
+(
+	Id uniqueidentifier not null PRIMARY KEY,
+	FirstName varchar (50) not null,
+	LastName varchar (50) not null,
+	Phone varchar (50) null,
+	Email varchar (50) null
+);
+create table LocationClient
+(
+	Id uniqueidentifier not null PRIMARY KEY,
+	LocationId uniqueidentifier not null FOREIGN KEY REFERENCES Location("Id"),
+	ClientId uniqueidentifier not null FOREIGN KEY REFERENCES Client("Id")
+);
+create table ClientService
+(
+	Id uniqueidentifier not null PRIMARY KEY,
+	ClinetId uniqueidentifier not null FOREIGN KEY REFERENCES Client("Id"),
+	ServiceId uniqueidentifier not null FOREIGN KEY REFERENCES Service("Id")
+);
+
+--Insert
+
+insert into Location values
+(newid(), 'Osijek', 'Radićeva 28' ),
+(newid(), 'Zagreb', 'Ilica 53' ),
+(newid(), 'Split', 'Marka Marulića 10A' );
+
+declare @id1 as uniqueidentifier set @id1=newid();
+insert into Employee values
+(@id1, 'Ivana', 'Marić', '2021-03-24 00:00', (select "Id" from "Location" where "Name"='Osijek'));
+insert into PersonalInfo values
+(@id1, null, null, 'imaric@mail.com', '1998-01-31 00:00');
+
+declare @id2 as uniqueidentifier set @id2=newid();
+insert into Employee values
+(@id2, 'Tea', 'Sabolić', '2022-12-04 00:00', (select "Id" from "Location" where "Name"='Zagreb'));
+insert into PersonalInfo values
+(@id2, null, 099734864, 'tsabolic99@mail.com', '');
+
+declare @id3 as uniqueidentifier set @id3=newid();
+insert into Employee values
+(@id3, 'Toni', 'Vuković', '2021-08-20 00:00', (select "Id" from "Location" where "Name"='Split'));
+insert into PersonalInfo values
+(@id3, 'Trg Ante Starčevića 6', null, 'tvukovic89@mail.com', '1989-11-09 00:00');
+
+Insert into Category values
+(newid(), 'HairCut', 'Haircut'),
+(newid(), 'Coloring', 'Color and highlights'),
+(newid(), 'Washing', 'Washing'),
+(newid(), 'Barber', 'Beard grooming'),
+(newid(), 'Treatment', 'Hair treatments'),
+(newid(), 'Styling', 'Hair styling');
+
+insert into HairLength values 
+(newid(), 'Short', 'Chin Length'),
+(newid(), 'Medium', 'Above Shoulders'),
+(newid(), 'Long', 'Past the Shoulders');
+
+--Ideja za Service tablicu je bila da se iz nje mogu izvaditi pojedinačne usluge koje bi se ispisale na računu, a i mogle bi se koristiti kasnije za kreiranje rasporeda jer ima trajanje usluge.
+insert into Service values
+(newid(), 'Short HairCut', (select "Id" from "Category" where "Name"='HairCut'), (select "Id" from "HairLength" where "Name"='Short'), '00:20', '6.00'),
+(newid(), 'Medium HairCut', (select "Id" from "Category" where "Name"='HairCut'), (select "Id" from "HairLength" where "Name"='Medium'), '00:30', '8.00'),
+(newid(), 'Long Haircut', (select "Id" from "Category" where "Name"='HairCut'), (select "Id" from "HairLength" where "Name"='Long'), '00:40', '10.00'),
+(newid(), 'Short Styling', (select "Id" from "Category" where "Name"='Styling'), (select "Id" from "HairLength" where "Name"='Short'), '00:10', '4.00'),
+(newid(), 'Medium Styling', (select "Id" from "Category" where "Name"='Styling'), (select "Id" from "HairLength" where "Name"='Medium'), '00:15', '5.00'),
+(newid(), 'Long Styling', (select "Id" from "Category" where "Name"='Styling'), (select "Id" from "HairLength" where "Name"='Long'), '00:20', '6.00'),
+(newid(), 'Short Washing', (select "Id" from "Category" where "Name"='Washing'), (select "Id" from "HairLength" where "Name"='Short'), '00:05', '3.00'),
+(newid(), 'Medium Washing', (select "Id" from "Category" where "Name"='Washing'), (select "Id" from "HairLength" where "Name"='Medium'), '00:07', '4.00'),
+(newid(), 'Long Washing', (select "Id" from "Category" where "Name"='Washing'), (select "Id" from "HairLength" where "Name"='Long'), '00:09', '5.00'),
+(newid(), 'Short Coloring', (select "Id" from "Category" where "Name"='Coloring'), (select "Id" from "HairLength" where "Name"='Short'), '01:00', '15.00'),
+(newid(), 'Medium Coloring', (select "Id" from "Category" where "Name"='Coloring'), (select "Id" from "HairLength" where "Name"='Medium'), '01:10', '18.00'),
+(newid(), 'Long Coloring', (select "Id" from "Category" where "Name"='Coloring'), (select "Id" from "HairLength" where "Name"='Long'), '01:20', '21.00'),
+(newid(), 'Short Barber', (select "Id" from "Category" where "Name"='Barber'), (select "Id" from "HairLength" where "Name"='Short'), '00:15', '5.00'),
+(newid(), 'Smoothing Treatment Short', (select "Id" from "Category" where "Name"='Treatment'), (select "Id" from "HairLength" where "Name"='Short'), '01:00', '60.00');
+
+insert into Client values
+(newid(), 'Marija', 'Grizelj', '099876991', null),
+(newid(), 'Ivan', 'Szili', null, 'i.szili99@gmail.com'),
+(newid(), 'Tonka', 'Ilić', '09834522', null),
+(newid(), 'Ivana', 'Erstić', '091832991', '@ivanaerstic@mail.com'),
+(newid(), 'Luka', 'Majer', '091856191', null);
+
+insert into LocationClient values
+(newid(), '000EB3B9-445F-428D-BB01-3AC0A18718E5', 'B82BAB41-EA56-4D07-BF0A-0D7C4069FB3C'),
+(newid(), '000EB3B9-445F-428D-BB01-3AC0A18718E5', '24A74358-E351-4CC0-B467-421EEAB266A9'),
+(newid(), '5B83FF3C-5399-4D3E-A86B-8B476EA6DFA1', '6A443928-33A2-44D4-A7BB-559D7A5F4E41'),
+(newid(), '5B83FF3C-5399-4D3E-A86B-8B476EA6DFA1', 'FEC4C032-A378-4409-9BF4-7B95C14244CD'),
+(newid(), '1CA8FA95-7BB9-460E-99E3-BBBE254AA4CB', '03174ACC-C790-4940-8D62-35E09674E7C0');
+
+insert into ClientService values
+(newid(), 'B82BAB41-EA56-4D07-BF0A-0D7C4069FB3C', '4D80CB90-A6EE-4801-8EA0-4FFA72C9AF3F'),
+(newid(), '03174ACC-C790-4940-8D62-35E09674E7C0', '611E2357-5C40-41EF-B2E5-BBFD0BF57ABD'),
+(newid(), '24A74358-E351-4CC0-B467-421EEAB266A9', 'E0A556A4-52D0-4692-A88B-56E8686FA405'),
+(newid(), '6A443928-33A2-44D4-A7BB-559D7A5F4E41', '4286D169-9521-4F10-9640-A74AE40F8CC6'),
+(newid(), 'FEC4C032-A378-4409-9BF4-7B95C14244CD', '00DD9F1C-277C-43AB-B6BC-E3A701798D07');
+
+alter table Service
+add "IsActive" bit default 1;
+
+update Service 
+set "IsActive"=1;
+
+create view "LocationClientService" as
+(select l."Name" as LocationName, lc."Id" as ClientId, s."Id", s."Name" as ServiceName, s."Price" from "LocationClient" lc 
+inner join "Location" l on lc."LocationId"=l."Id"
+inner join "ClientService" cs on lc."ClientId"=cs."ClinetId"
+inner join "Service" s on cs."ServiceId"=s."Id");
+
+select e."Id", e."FirstName", e."LastName", l."Name" as LocationName from Employee e 
+	inner join Location l on l."Id"= e."LocationId";
+
+create view "EmployeeLocation" as
+(
+	select e."Id" as EmployeeId, e."FirstName", e."LastName", l."Name" as LocationName from Employee e 
+	inner join Location l on l."Id"= e."LocationId"
+);
+
+select s."Name" as ServiceName, count(lcs."ServiceName") as NumberOfServicesProvided into "TotalServicesAllLocations_temp" from LocationClientService lcs
+inner join Service s on s."Id"=lcs."Id"
+group by s."Name";
+
+ALTER view LocationClientService as
+(select l."Name" as LocationName, lc."ClientId", s."Id", s."Name" as ServiceName, s."Price" from "LocationClient" lc 
+inner join "Location" l on lc."LocationId"=l."Id"
+inner join "ClientService" cs on lc."ClientId"=cs."ClinetId"
+inner join "Service" s on cs."ServiceId"=s."Id");
+--Alter view jer mi nije vratio ClientId nego Id iz tablice ClientService
+
+drop view LocationClientService --Zato što je ime kolone krivo i treba napraviti rename kolone.
+EXEC sp_rename 'ClientService.ClinetId', 'ClientId';
+
+--Ponovo napravila view koji je ranije dropan zbog renam-a
+create view LocationClientService as
+(select l."Name" as LocationName, lc."ClientId", s."Id", s."Name" as ServiceName, s."Price" from "LocationClient" lc 
+inner join "Location" l on lc."LocationId"=l."Id"
+inner join "ClientService" cs on lc."ClientId"=cs."ClientId"
+inner join "Service" s on cs."ServiceId"=s."Id");
+
+create function ClientServiceFunction(@clientId uniqueidentifier)
+returns table
+as
+return 
+	select cs."ClientId", cs."ServiceId", s."Name" as ServiceName
+	from ClientService cs
+	inner join Service s on cs."ServiceId"=s."Id"
+	where cs."ClientId"=@clientId
