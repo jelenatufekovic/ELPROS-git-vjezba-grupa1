@@ -1,0 +1,72 @@
+Create database HairSalon;
+create table Location
+(
+	Id uniqueidentifier PRIMARY KEY not null,
+	Name varchar (50) not null,
+	Address  varchar (250) not null
+);
+
+create table Employee
+(
+	Id uniqueidentifier not null PRIMARY KEY,
+	FirstName varchar(50) not null,
+	LastName varchar(50) not null,
+	DateOfEmployment smalldatetime not null,
+	LocationId uniqueidentifier not null FOREIGN KEY REFERENCES Location("Id")
+);
+create table PersonalInfo
+(
+	Id uniqueidentifier not null PRIMARY KEY FOREIGN KEY REFERENCES Employee("Id"),
+	Address varchar (250) null,
+	Phone varchar (50) null,
+	Email varchar (50) null,
+	DateOfBirth smalldatetime null
+);
+Create Table Category
+(
+	Id uniqueidentifier not null PRIMARY KEY,
+	Name varchar (50) not null,
+	Description varchar (150) not null
+);
+create table HairLength
+(
+	Id uniqueidentifier not null PRIMARY KEY,
+	Name varchar (50) not null,
+	Description varchar (150) not null
+);
+create table Service
+(
+	Id uniqueidentifier not null PRIMARY KEY,
+	Name varchar (150) not null,
+	CategoryId uniqueidentifier not null FOREIGN KEY REFERENCES Category("Id"),
+	HairLengthId uniqueidentifier not null FOREIGN KEY REFERENCES HairLength("Id"),
+	Duration time not null,
+	Price decimal (10,2) not null
+);
+create table LocationService
+(
+	Id uniqueidentifier not null PRIMARY KEY,
+	LocationId uniqueidentifier not null FOREIGN KEY REFERENCES Location("Id"),
+	ServiceId uniqueidentifier not null FOREIGN KEY REFERENCES Service("Id")
+);
+create table Client
+(
+	Id uniqueidentifier not null PRIMARY KEY,
+	FirstName varchar (50) not null,
+	LastName varchar (50) not null,
+	Phone varchar (50) null,
+	Email varchar (50) null
+);
+create table LocationClient
+(
+	Id uniqueidentifier not null PRIMARY KEY,
+	LocationId uniqueidentifier not null FOREIGN KEY REFERENCES Location("Id"),
+	ClientId uniqueidentifier not null FOREIGN KEY REFERENCES Client("Id")
+);
+create table ClientService
+(
+	Id uniqueidentifier not null PRIMARY KEY,
+	ClinetId uniqueidentifier not null FOREIGN KEY REFERENCES Client("Id"),
+	ServiceId uniqueidentifier not null FOREIGN KEY REFERENCES Service("Id")
+);
+
