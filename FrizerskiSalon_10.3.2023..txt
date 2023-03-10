@@ -70,3 +70,40 @@ create table ClientService
 	ServiceId uniqueidentifier not null FOREIGN KEY REFERENCES Service("Id")
 );
 
+--Insert
+
+insert into Location values
+(newid(), 'Osijek', 'Radićeva 28' ),
+(newid(), 'Zagreb', 'Ilica 53' ),
+(newid(), 'Split', 'Marka Marulića 10A' );
+
+declare @id1 as uniqueidentifier set @id1=newid();
+insert into Employee values
+(@id1, 'Ivana', 'Marić', '2021-03-24 00:00', (select "Id" from "Location" where "Name"='Osijek'));
+insert into PersonalInfo values
+(@id1, null, null, 'imaric@mail.com', '1998-01-31 00:00');
+
+declare @id2 as uniqueidentifier set @id2=newid();
+insert into Employee values
+(@id2, 'Tea', 'Sabolić', '2022-12-04 00:00', (select "Id" from "Location" where "Name"='Zagreb'));
+insert into PersonalInfo values
+(@id2, null, 099734864, 'tsabolic99@mail.com', '');
+
+declare @id3 as uniqueidentifier set @id3=newid();
+insert into Employee values
+(@id3, 'Toni', 'Vuković', '2021-08-20 00:00', (select "Id" from "Location" where "Name"='Split'));
+insert into PersonalInfo values
+(@id3, 'Trg Ante Starčevića 6', null, 'tvukovic89@mail.com', '1989-11-09 00:00');
+
+Insert into Category values
+(newid(), 'HairCut', 'Haircut'),
+(newid(), 'Coloring', 'Color and highlights'),
+(newid(), 'Washing', 'Washing'),
+(newid(), 'Barber', 'Beard grooming'),
+(newid(), 'Treatment', 'Hair treatments'),
+(newid(), 'Styling', 'Hair styling');
+
+insert into HairLength values 
+(newid(), 'Short', 'Chin Length'),
+(newid(), 'Medium', 'Above Shoulders'),
+(newid(), 'Long', 'Past the Shoulders');
