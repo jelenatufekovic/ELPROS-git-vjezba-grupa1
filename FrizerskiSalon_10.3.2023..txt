@@ -108,6 +108,7 @@ insert into HairLength values
 (newid(), 'Medium', 'Above Shoulders'),
 (newid(), 'Long', 'Past the Shoulders');
 
+--Ideja za Service tablicu je bila da se iz nje mogu izvaditi pojedinačne usluge koje bi se ispisale na računu, a i mogle bi se koristiti kasnije za kreiranje rasporeda jer ima trajanje usluge.
 insert into Service values
 (newid(), 'Short HairCut', (select "Id" from "Category" where "Name"='HairCut'), (select "Id" from "HairLength" where "Name"='Short'), '00:20', '6.00'),
 (newid(), 'Medium HairCut', (select "Id" from "Category" where "Name"='HairCut'), (select "Id" from "HairLength" where "Name"='Medium'), '00:30', '8.00'),
@@ -145,3 +146,23 @@ insert into ClientService values
 (newid(), '6A443928-33A2-44D4-A7BB-559D7A5F4E41', '4286D169-9521-4F10-9640-A74AE40F8CC6'),
 (newid(), 'FEC4C032-A378-4409-9BF4-7B95C14244CD', '00DD9F1C-277C-43AB-B6BC-E3A701798D07');
 
+alter table Service
+add "IsActive" bit default 1;
+
+update Service 
+set "IsActive"=1;
+
+create view "LocationClientService" as
+(select l."Name" as LocationName, lc."Id" as ClientId, s."Id", s."Name" as ServiceName, s."Price" from "LocationClient" lc 
+inner join "Location" l on lc."LocationId"=l."Id"
+inner join "ClientService" cs on lc."ClientId"=cs."ClinetId"
+inner join "Service" s on cs."ServiceId"=s."Id");
+
+select e."Id", e."FirstName", e."LastName", l."Name" as LocationName from Employee e 
+	inner join Location l on l."Id"= e."LocationId";
+
+create view "EmployeeLocation" as
+(
+	select e."Id" as EmployeeId, e."FirstName", e."LastName", l."Name" as LocationName from Employee e 
+	inner join Location l on l."Id"= e."LocationId"
+);
